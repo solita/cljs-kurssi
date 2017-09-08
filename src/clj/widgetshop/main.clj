@@ -1,0 +1,21 @@
+(ns widgetshop.main
+  "Main ns for widgetshop. Starts everything up."
+  (:gen-class)
+  (:require [com.stuartsierra.component :as component]
+            [widgetshop.components.http :as http]))
+
+(def system nil)
+
+(defn widgetshop-system [settings]
+  (component/system-map
+   ;;:db {:FIX :ME}
+   :http (http/create-http-server (get-in settings [:http :port]))))
+
+
+(defn -main [& args]
+  (alter-var-root #'system
+                  (constantly
+                   (-> "settings.edn"
+                       slurp read-string
+                       widgetshop-system
+                       component/start-system))))
