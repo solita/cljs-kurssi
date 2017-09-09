@@ -18,6 +18,12 @@
                                                       :description "Fun game for the whole family"
                                                       :price 70.95}]}}))
 
+;; Task 1: refactor this, the listing of products in a category should
+;; be its own component (perhaps in another namespace).
+;;
+;; Task 2: Add actions to add item to cart. See that cart badge is automatically updated.
+;;
+
 (defn widgetshop [app]
   [ui/mui-theme-provider
    {:mui-theme (get-mui-theme
