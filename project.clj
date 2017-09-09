@@ -1,5 +1,6 @@
 (defproject cljs-kurssi "0.1-SNAPSHOT"
-  :dependencies [[org.clojure/clojure "1.9.0-alpha20"]
+  :dependencies [[org.clojure/clojure "1.9.0-alpha19"]
+                 [org.clojure/clojurescript "1.9.660"]
 
                  ;; Component library
                  [com.stuartsierra/component "0.3.2"]
@@ -16,9 +17,33 @@
                  [com.opentable.components/otj-pg-embedded "0.7.1"]
 
                  ;; http-kit HTTP server (and client)
-                 [http-kit "2.2.0"]]
+                 [http-kit "2.2.0"]
 
+                 ;; Frontend UI-libraries
+                 [reagent "0.7.0"]
+                 [cljsjs/react "15.6.1-1"]
+                 [cljsjs/react-dom "15.6.1-1"]
+                 [cljs-react-material-ui "0.2.48"]
+                 [figwheel "0.5.10"]
 
+                 ;; Something pulls an old guava which prevents closure compiler
+                 ;; override here
+                 [com.google.guava/guava "21.0"]
+                 ]
+
+  :plugins [[lein-cljsbuild "1.1.5"]
+            [lein-figwheel "0.5.10"]]
 
   ;; Sources for backend: clj and cljc (shared with frontend)
-  :source-paths ["src/clj" "src/cljc"])
+  :source-paths ["src/clj" "src/cljc"]
+
+  ;; Configure ClojureScript builds
+  :cljsbuild {:builds
+              [{:id "dev"
+                :source-paths ["src/cljs" "src/cljc"]
+                :figwheel {:on-jsload "widgetshop.main/reload-hook"}
+                :compiler {:optimizations :none
+                           :source-map true
+                           :output-to "resources/public/js/widgetshop.js"
+                           :output-dir "resources/public/js/out"}}]}
+  )
