@@ -4,19 +4,11 @@
             [cljsjs.material-ui]
             [cljs-react-material-ui.core :refer [get-mui-theme color]]
             [cljs-react-material-ui.reagent :as ui]
-            [cljs-react-material-ui.icons :as ic]))
+            [cljs-react-material-ui.icons :as ic]
+            [widgetshop.app.state :refer [app]]
+            [widgetshop.app.products :as products]))
 
-(defonce app (r/atom {:cart []
-                      :categories [] ;; list of product categories
-                      :category "toys" ;; the selected category
-                      :products-by-category {"toys" [{:id 1
-                                                      :name "log from blammo"
-                                                      :description "It's log, it's big, it's heavy, it's wood."
-                                                      :price 4.55}
-                                                     {:id 2
-                                                      :name "don't whizz on the electric fence"
-                                                      :description "Fun game for the whole family"
-                                                      :price 70.95}]}}))
+
 
 ;; Task 1: refactor this, the listing of products in a category should
 ;; be its own component (perhaps in another namespace).
@@ -37,23 +29,27 @@
                                  (ic/action-shopping-cart)]])}]
     [ui/paper
 
-     [ui/table
-      [ui/table-header
-       [ui/table-row
-        [ui/table-header-column "Name"]
-        [ui/table-header-column "Description"]
-        [ui/table-header-column "Price (€)"]
-        [ui/table-header-column "Add to cart"]]]
-      [ui/table-body
-       (for [{:keys [id name description price]} ((:products-by-category app) (:category app))]
-         ^{:key id}
-         [ui/table-row
-          [ui/table-row-column name]
-          [ui/table-row-column description]
-          [ui/table-row-column price]
-          [ui/table-row-column
-           [ui/flat-button {:primary true :on-click #(js/alert "add to cart!")}
-            "Add to cart"]]])]]
+     (let [products ((:products-by-category app) (:category app))]
+       (if (= :loading products)
+         [ui/refresh-indicator {:status "loading" :size 40}]
+
+         [ui/table
+          [ui/table-header
+           [ui/table-row
+            [ui/table-header-column "Name"]
+            [ui/table-header-column "Description"]
+            [ui/table-header-column "Price (€)"]
+            [ui/table-header-column "Add to cart"]]]
+          [ui/table-body
+           (for [{:keys [id name description price]} ((:products-by-category app) (:category app))]
+             ^{:key id}
+             [ui/table-row
+              [ui/table-row-column name]
+              [ui/table-row-column description]
+              [ui/table-row-column price]
+              [ui/table-row-column
+               [ui/flat-button {:primary true :on-click #(js/alert "add to cart!")}
+                "Add to cart"]]])]]))
 
      [ui/raised-button {:label        "Click me"
                         :icon         (ic/social-group)

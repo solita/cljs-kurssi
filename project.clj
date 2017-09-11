@@ -19,6 +19,17 @@
                  ;; http-kit HTTP server (and client)
                  [http-kit "2.2.0"]
 
+                 ;; Routing library for publishing services
+                 [compojure "1.6.0"]
+
+                 ;; Transit data format libraries for backend and frontend
+                 [com.cognitect/transit-clj "0.8.300"]
+                 [com.cognitect/transit-cljs "0.8.239"]
+
+                 ;; Ajax library for frontend
+                 [cljs-ajax "0.7.2"]
+
+
                  ;; Frontend UI-libraries
                  [reagent "0.7.0"]
                  [cljsjs/react "15.6.1-1"]
@@ -46,4 +57,5 @@
                            :source-map true
                            :output-to "resources/public/js/widgetshop.js"
                            :output-dir "resources/public/js/out"}}]}
-  )
+
+  :main widgetshop.main)
