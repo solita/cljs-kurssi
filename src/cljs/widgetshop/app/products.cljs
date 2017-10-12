@@ -3,8 +3,8 @@
   (:require [widgetshop.app.state :as state]
             [widgetshop.server :as server]))
 
-(defn- products-by-category [app category products-by-category]
-  (assoc-in app [:products-by-category category] products-by-category))
+(defn- products-by-category [app category products]
+  (assoc-in app [:products-by-category category] products))
 
 (defn- set-categories [app categories]
   (assoc-in app [:categories] categories))
