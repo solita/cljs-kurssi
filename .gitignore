@@ -2,3 +2,7 @@ resources/public/js
 .idea/
 target/
 figwheel_server.log
+.lein-repl-history
+.nrepl-port
+cljs-kurssi.iml
+out/
