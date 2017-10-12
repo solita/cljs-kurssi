@@ -1,1 +1,4 @@
 resources/public/js
+.idea/
+target/
+figwheel_server.log
