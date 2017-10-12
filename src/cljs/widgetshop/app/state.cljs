@@ -9,10 +9,23 @@
                       ;; Loaded product listings keyd by selected category
                       :products-by-category {}}))
 
-(defn update-state! [update-fn & args]
+(defn update-state!
+  "Updates the application state using a function, that accepts as parameters
+  the current state and a variable number of arguments, and returns a new state.
+
+  (defn set-foo [app n]
+     (assoc app :foo n))
+
+  (update-state! set-foo 1)"
+  [update-fn & args]
   (swap! app
          (fn [current-app-state]
            (apply update-fn current-app-state args))))
 
-(defn set-state! [path value]
+(defn set-state!
+  "Updates the application state using a path and a value.
+
+  NOTE: It's better to use update-state! for better testability, since you can easily
+  write unit tests for the function you provide to update-state!"
+  [path value]
   (swap! app assoc-in path value))
