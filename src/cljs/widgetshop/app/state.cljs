@@ -21,11 +21,3 @@
   (swap! app
          (fn [current-app-state]
            (apply update-fn current-app-state args))))
-
-(defn set-state!
-  "Updates the application state using a path and a value.
-
-  NOTE: It's better to use update-state! for better testability, since you can easily
-  write unit tests for the function you provide to update-state!"
-  [path value]
-  (swap! app assoc-in path value))
