@@ -5,7 +5,7 @@
             [cljs-react-material-ui.core :refer [get-mui-theme color]]
             [cljs-react-material-ui.reagent :as ui]
             [cljs-react-material-ui.icons :as ic]
-            [widgetshop.app.state :refer [app]]
+            [widgetshop.app.state :as state]
             [widgetshop.app.products :as products]))
 
 
@@ -73,7 +73,7 @@
 
 
 (defn main-component []
-  [widgetshop @app])
+  [widgetshop @state/app])
 
 (defn ^:export main []
   (products/load-product-categories!)

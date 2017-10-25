@@ -9,10 +9,15 @@
                       ;; Loaded product listings keyd by selected category
                       :products-by-category {}}))
 
-(defn update-state! [update-fn & args]
+(defn update-state!
+  "Updates the application state using a function, that accepts as parameters
+  the current state and a variable number of arguments, and returns a new state.
+
+  (defn set-foo [app n]
+     (assoc app :foo n))
+
+  (update-state! set-foo 1)"
+  [update-fn & args]
   (swap! app
          (fn [current-app-state]
            (apply update-fn current-app-state args))))
-
-(defn set-state! [path value]
-  (swap! app assoc-in path value))
