@@ -16,11 +16,6 @@
 ;; Task 2: Add actions to add item to cart. See that cart badge is automatically updated.
 ;;
 
-(defn listaus [e! jutut]
-  [:ul
-   (for [juttu jutut]
-     [:li [:a {:on-click #(e! (->ValitseJuttu juttu))} juttu]])])
-
 (defn widgetshop [app]
   [ui/mui-theme-provider
    {:mui-theme (get-mui-theme

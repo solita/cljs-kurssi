@@ -1,6 +1,6 @@
 (defproject cljs-kurssi "0.1-SNAPSHOT"
   :dependencies [[org.clojure/clojure "1.9.0-alpha19"]
-                 [org.clojure/clojurescript "1.9.660"]
+                 [org.clojure/clojurescript "1.9.946"]
 
                  ;; Component library
                  [com.stuartsierra/component "0.3.2"]
