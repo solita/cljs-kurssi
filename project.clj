@@ -40,7 +40,7 @@
                  ;; Something pulls an old guava which prevents closure compiler
                  ;; override here
                  [com.google.guava/guava "21.0"]
-                 ]
+                 [binaryage/devtools "0.9.7"]]
 
   :plugins [[lein-cljsbuild "1.1.5"]
             [lein-figwheel "0.5.10"]]
@@ -56,6 +56,7 @@
                 :compiler {:optimizations :none
                            :source-map true
                            :output-to "resources/public/js/widgetshop.js"
-                           :output-dir "resources/public/js/out"}}]}
+                           :output-dir "resources/public/js/out"
+                           :preloads [devtools.preload]}}]}
 
   :main widgetshop.main)
