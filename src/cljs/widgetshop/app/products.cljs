@@ -26,3 +26,60 @@
 
 (defn load-product-categories! []
   (server/get! "/categories" {:on-success #(state/update-state! set-categories %)}))
+
+
+(defn add-to-cart! [product]
+  (.log js/console "adding product to cart " (pr-str product))
+  (state/update-state!
+   ;; use update variant:
+   ;; update :cart conj product
+
+   ;; long form function variant:
+   (fn [app]
+     (let [old-cart (:cart app)
+           new-cart (conj old-cart product)]
+       (assoc app :cart new-cart)))))
+
+(defn find-product-by-index [app idx]
+  (let [category (:category app)
+        products-of-category ((:products-by-category app) category)
+        product-by-index (nth products-of-category idx)]
+    product-by-index))
+
+(defn select-product-by-index! [idx]
+  (state/update-state!
+   (fn [app]
+     (assoc app :selected-product (find-product-by-index app idx)))))
+
+(defn remove-product-selection! []
+  (state/update-state! dissoc :selected-product))
+
+(defn update-product-review-comment! [comment]
+  (state/update-state!
+   assoc-in
+   [:selected-product :review :comment] comment))
+
+(defn update-product-review-stars! [stars]
+  (state/update-state!
+   assoc-in
+   [:selected-product :review :stars] stars))
+
+(defn start-review! []
+  (state/update-state! assoc-in [:selected-product :review] {:comment "" :stars 0}))
+
+(defn submit-review! []
+  (state/update-state!
+   (fn [app]
+     (let [review (assoc (get-in app [:selected-product :review])
+                         :product-id (get-in app [:selected-product :id]))]
+       (.log js/console "REVIEW:" (pr-str review))
+       (server/post! "/review"
+                    {:body review
+                     :on-success #(.log js/console "onnistui" (pr-str %))
+                     :on-failure #(.log js/console "ei onnistu")})
+       (assoc-in app [:selected-product :review :submit-in-progress?] true))))
+
+  ;; 1. lähetä review palvelimelle
+  ;; 2. aseta tilaan lippu, että lähetys käynnissä
+  ;; 3. on-success handlerissa poistetaan lippu ja reviewn tiedot
+  )

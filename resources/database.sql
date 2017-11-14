@@ -18,6 +18,12 @@ CREATE TABLE product_category (
   category_id INTEGER NOT NULL REFERENCES category (id)
 );
 
+CREATE TABLE product_review (
+  product_id INTEGER NOT NULL REFERENCES product (id),
+  stars NUMERIC NOT NULL,
+  "comment" TEXT
+);
+
 -- insert some test data
 
 INSERT INTO category (name, description)
@@ -33,3 +39,7 @@ VALUES ('Illudium Q-36 Explosive Space Modulator', 'Pesky planets obstructing yo
 
 INSERT INTO product_category (product_id, category_id)
 VALUES (1, 3), (2, 1), (3, 1), (4, 2);
+
+INSERT INTO product_review (product_id, stars, "comment")
+VALUES (1, 5, 'perfect for blowing up earth'),
+       (1, 1, 'didn''t work for me');

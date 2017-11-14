@@ -16,12 +16,66 @@
 ;; Task 2: Add actions to add item to cart. See that cart badge is automatically updated.
 ;;
 
-(defn listaus [e! jutut]
-  [:ul
-   (for [juttu jutut]
-     [:li [:a {:on-click #(e! (->ValitseJuttu juttu))} juttu]])])
+(defn product-listing [products]
+  (if (= :loading products)
+    [ui/refresh-indicator {:status "loading" :size 40 :left 10 :top 10}]
 
-(defn widgetshop [app]
+    [ui/table {:on-row-selection #(let [idx (first (js->clj %))]
+                                    (products/select-product-by-index! idx))}
+     [ui/table-header {:display-select-all false :adjust-for-checkbox false}
+      [ui/table-row
+       [ui/table-header-column "Name"]
+       [ui/table-header-column "Description"]
+       [ui/table-header-column "Price (€)"]
+       [ui/table-header-column "Add to cart"]]]
+     [ui/table-body {:display-row-checkbox false}
+      (for [{:keys [id name description price] :as product} products]
+        ^{:key id}
+        [ui/table-row
+         [ui/table-row-column name]
+         [ui/table-row-column description]
+         [ui/table-row-column price]
+         [ui/table-row-column
+          [ui/flat-button {:primary true
+                           :on-click (fn [e]
+                                       (.stopPropagation e)
+                                       (products/add-to-cart! product))}
+           "Add to cart"]]])]]))
+
+(defn product-review [{:keys [stars comment submit-in-progress?]}]
+  [:div.product-review
+   [:h3 "Your review"]
+   (doall
+    (for [s (range 1 6)
+          :let [set-stars! #(products/update-product-review-stars! s)]]
+      [:span.stars {:key s}
+       (if (>= stars s)
+         [ic/toggle-star {:on-click set-stars!}]
+         [ic/toggle-star-border {:on-click set-stars!}])]))
+
+   [ui/text-field {:value (or comment "")
+                   :floating-label-text "Review comment"
+                   :on-change (fn [event value]
+                                (products/update-product-review-comment! value))}]
+   [ui/flat-button {:primary true
+                    :disabled submit-in-progress?
+                    :on-click products/submit-review!}
+    "Submit review"]])
+
+(defn product-info-page [product]
+  [:div
+   [:h3 "Product info"]
+   [:div.product-info
+    [:div [:b "Name: "] (:name product)]
+    [:div [:b "Description: "] (:description product)]
+    [:div [:b "Price: "] (:description product)]]
+   (if-let [review (:review product)]
+     [product-review (:review product)]
+     [ui/flat-button {:on-click #(products/start-review!)} "Review"])
+   [ui/flat-button {:on-click products/remove-product-selection!}
+    "Back to listing"]])
+
+(defn widgetshop [{:keys [products-by-category category selected-product] :as app}]
   [ui/mui-theme-provider
    {:mui-theme (get-mui-theme
                 {:palette {:text-color (color :green600)}})}
@@ -34,42 +88,24 @@
                                  (ic/action-shopping-cart)]])}]
     [ui/paper
 
-     ;; Product category selection
-     (when-not (= :loading (:categories app))
-       [ui/select-field {:floating-label-text "Select product category"
-                         :value (:id (:category app))
-                         :on-change (fn [evt idx value]
-                                      (products/select-category-by-id! value))}
-        (for [{:keys [id name] :as category} (:categories app)]
-          ^{:key id}
-          [ui/menu-item {:value id :primary-text name}])])
+     (if selected-product
+       ;; Show product info page
+       [product-info-page selected-product]
 
-     ;; Product listing for the selected category
-     (let [products ((:products-by-category app) (:category app))]
-       (if (= :loading products)
-         [ui/refresh-indicator {:status "loading" :size 40 :left 10 :top 10}]
-
-         [ui/table
-          [ui/table-header {:display-select-all false :adjust-for-checkbox false}
-           [ui/table-row
-            [ui/table-header-column "Name"]
-            [ui/table-header-column "Description"]
-            [ui/table-header-column "Price (€)"]
-            [ui/table-header-column "Add to cart"]]]
-          [ui/table-body {:display-row-checkbox false}
-           (for [{:keys [id name description price]} ((:products-by-category app) (:category app))]
+       ;; Show product category selection and listing
+       [:span
+        ;; Product category selection
+        (when-not (= :loading (:categories app))
+          [ui/select-field {:floating-label-text "Select product category"
+                            :value (:id (:category app))
+                            :on-change (fn [evt idx value]
+                                         (products/select-category-by-id! value))}
+           (for [{:keys [id name] :as category} (:categories app)]
              ^{:key id}
-             [ui/table-row
-              [ui/table-row-column name]
-              [ui/table-row-column description]
-              [ui/table-row-column price]
-              [ui/table-row-column
-               [ui/flat-button {:primary true :on-click #(js/alert "add to cart!")}
-                "Add to cart"]]])]]))
+             [ui/menu-item {:value id :primary-text name}])])
 
-     [ui/raised-button {:label        "Click me"
-                        :icon         (ic/social-group)
-                        :on-click     #(println "clicked")}]]]])
+        ;; Product listing for the selected category
+        [product-listing (products-by-category category)]])]]])
 
 
 (defn main-component []
