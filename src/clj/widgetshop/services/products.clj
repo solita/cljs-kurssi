@@ -6,8 +6,11 @@
 
 (defn fetch-products-for-category [db category]
   (into []
-        (map #(update % :price double))
-        (jdbc/query db [(str "SELECT p.id,p.name,p.description,p.price"
+        (comp
+         (map #(update % :price double))
+         (map #(update % :stars double)))
+        (jdbc/query db [(str "SELECT p.id,p.name,p.description,p.price,"
+                             "       (SELECT COALESCE(AVG(r.stars), 0) FROM product_review r WHERE r.product_id=p.id) as stars"
                              "  FROM product p"
                              "  JOIN product_category pc ON pc.product_id = p.id "
                              " WHERE pc.category_id = ?")
