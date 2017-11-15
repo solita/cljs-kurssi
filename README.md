@@ -16,6 +16,10 @@ Kun figwheel on käynnissä frontend buildi päivittyy automaattisesti ja kytkey
 koodimuutokset. Joissain tapauksissa täytyy selain uudelleenladata, jos React jää virheelliseen
 tilaan, mutta useimmat muutokset toimivat livenä.
 
+Käytössä on myös Chrome-selaimessa toimiva konsolilaajennus:
+
+https://github.com/binaryage/cljs-devtools
+
 # Backend kehitys
 
 Kun kehität backendiä, aja `lein run` komennon sijasta `lein repl` ja kytkeydy siihen lempieditorillasi.
