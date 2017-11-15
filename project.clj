@@ -35,7 +35,7 @@
                  [cljsjs/react "15.6.1-1"]
                  [cljsjs/react-dom "15.6.1-1"]
                  [cljs-react-material-ui "0.2.48"]
-                 [figwheel "0.5.10"]
+                 [figwheel "0.5.14"]
 
                  ;; Something pulls an old guava which prevents closure compiler
                  ;; override here
@@ -43,7 +43,7 @@
                  ]
 
   :plugins [[lein-cljsbuild "1.1.5"]
-            [lein-figwheel "0.5.10"]]
+            [lein-figwheel "0.5.14"]]
 
   ;; Sources for backend: clj and cljc (shared with frontend)
   :source-paths ["src/clj" "src/cljc"]
