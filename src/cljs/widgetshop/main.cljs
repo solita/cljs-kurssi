@@ -53,8 +53,9 @@
 
 (defn quantity-field [product]
   [ui/text-field {:value (:qty product)
-                  :on-change #(when-let [qty (-> % .-target .-value js/parseInt)]
-                                (products/set-product-quantity! product qty))}])
+                  :on-change #(let [qty (-> % .-target .-value js/parseInt)]
+                                (when-not (js/isNaN qty)
+                                  (products/set-product-quantity! product qty)))}])
 
 (def cart-columns
   [{:label "Product" :value-fn :name}
