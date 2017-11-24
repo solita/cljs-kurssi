@@ -28,17 +28,29 @@
   (server/get! "/categories" {:on-success #(state/update-state! set-categories %)}))
 
 
+(defn- product-index-in-cart [old-cart product]
+  (first (keep-indexed (fn [idx cart-product]
+                         (when (= (:id product) (:id cart-product))
+                           idx))
+                       old-cart)))
+
 (defn add-to-cart! [product]
   (.log js/console "adding product to cart " (pr-str product))
   (state/update-state!
-   ;; use update variant:
-   ;; update :cart conj product
-
-   ;; long form function variant:
    (fn [app]
      (let [old-cart (:cart app)
-           new-cart (conj old-cart product)]
+           idx (product-index-in-cart old-cart product)
+           new-cart (if idx
+                      (update old-cart idx update :qty inc)
+                      (conj old-cart (assoc product :qty 1)))]
        (assoc app :cart new-cart)))))
+
+(defn set-product-quantity! [product new-quantity]
+  (state/update-state!
+   (fn [app]
+     (update app :cart
+             (fn [old-cart]
+               (update old-cart (product-index-in-cart old-cart product) assoc :qty new-quantity))))))
 
 (defn find-product-by-index [app idx]
   (let [category (:category app)
@@ -49,7 +61,9 @@
 (defn select-product-by-index! [idx]
   (state/update-state!
    (fn [app]
-     (assoc app :selected-product (find-product-by-index app idx)))))
+     (assoc app
+            :selected-product (find-product-by-index app idx)
+            :page :product-info))))
 
 (defn remove-product-selection! []
   (state/update-state! dissoc :selected-product))
