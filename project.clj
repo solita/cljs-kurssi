@@ -36,6 +36,7 @@
                  [cljsjs/react-dom "15.6.1-1"]
                  [cljs-react-material-ui "0.2.48"]
                  [figwheel "0.5.10"]
+                 [funcool/bide "1.5.1"] ;; URL router
 
                  ;; Something pulls an old guava which prevents closure compiler
                  ;; override here

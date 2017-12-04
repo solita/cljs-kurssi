@@ -1,7 +1,8 @@
 (ns widgetshop.app.products
   "Controls product listing information."
   (:require [widgetshop.app.state :as state]
-            [widgetshop.server :as server]))
+            [widgetshop.server :as server]
+            [clojure.string :as str]))
 
 (defn- products-by-category [app category products]
   (assoc-in app [:products-by-category category] products))
@@ -24,8 +25,20 @@
                    {:on-success #(state/update-state! products-by-category category %)}))
     category-id))
 
-(defn load-product-categories! []
-  (server/get! "/categories" {:on-success #(state/update-state! set-categories %)}))
+(defn select-category-by-name! [category-name]
+  (let [category-name (str/lower-case category-name)
+        id (some #(when (= (str/lower-case (:name %))
+                           category-name)
+                    (:id %))
+                 (:categories @state/app))]
+    (when id
+      (select-category-by-id! id))))
+
+(defn load-product-categories! [then]
+  (server/get! "/categories" {:on-success
+                              #(do
+                                 (state/update-state! set-categories %)
+                                 (then))}))
 
 
 (defn- product-index-in-cart [old-cart product]

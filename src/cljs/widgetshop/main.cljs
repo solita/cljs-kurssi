@@ -7,7 +7,8 @@
             [cljs-react-material-ui.icons :as ic]
             [widgetshop.app.state :as state]
             [widgetshop.app.products :as products]
-            [widgetshop.app.navigation :as navigation]))
+            [widgetshop.app.navigation :as navigation]
+            [widgetshop.routes :as routes]))
 
 
 
@@ -99,7 +100,11 @@
    [ui/flat-button {:primary true
                     :disabled submit-in-progress?
                     :on-click products/submit-review!}
-    "Submit review"]])
+    "Submit review"]
+
+
+
+   ])
 
 (defn product-info-page [product]
   [:div
@@ -136,7 +141,7 @@
        :cart
        [cart-page (:cart app)]
 
-       :product-listing
+       (:front-page :product-listing)
        ;; Show product category selection and listing
        [:span
         ;; Product category selection
@@ -160,7 +165,7 @@
   [widgetshop @state/app])
 
 (defn ^:export main []
-  (products/load-product-categories!)
+  (products/load-product-categories! routes/start!)
   (r/render-component [main-component] (.getElementById js/document "app")))
 
 (defn ^:export reload-hook []
