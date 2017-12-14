@@ -110,3 +110,8 @@
   ;; 2. aseta tilaan lippu, että lähetys käynnissä
   ;; 3. on-success handlerissa poistetaan lippu ja reviewn tiedot
   )
+
+
+
+(defn set-selected-product-id! [id]
+  (state/update-state! assoc :selected-product-id id))

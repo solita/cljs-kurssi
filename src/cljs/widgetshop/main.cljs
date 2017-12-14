@@ -107,19 +107,22 @@
    ])
 
 (defn product-info-page [product]
-  [:div
-   [:h3 "Product info"]
-   [:div.product-info
-    [:div [:b "Name: "] (:name product)]
-    [:div [:b "Description: "] (:description product)]
-    [:div [:b "Price: "] (:description product)]]
-   (if-let [review (:review product)]
-     [product-review (:review product)]
-     [ui/flat-button {:on-click #(products/start-review!)} "Review"])
-   [ui/flat-button {:on-click navigation/to-product-listing}
-    "Back to listing"]])
+  (if-not product
+    [:div "tässä on hieno ajax loader gif"]
+    [:div
+     [:h3 "Product info"]
+     [:div.product-info
+      [:div [:b "Name: "] (:name product)]
+      [:div [:b "Description: "] (:description product)]
+      [:div [:b "Price: "] (:description product)]]
+     (if-let [review (:review product)]
+       [product-review (:review product)]
+       [ui/flat-button {:on-click #(products/start-review!)} "Review"])
+     [ui/flat-button {:on-click navigation/to-product-listing}
+      "Back to listing"]]))
 
-(defn widgetshop [{:keys [page products-by-category category selected-product] :as app}]
+(defn widgetshop [{:keys [page products-by-category category selected-product
+                          selected-product-id] :as app}]
   [ui/mui-theme-provider
    {:mui-theme (get-mui-theme
                 {:palette {:text-color (color :green600)}})}
@@ -134,9 +137,10 @@
     [ui/paper
 
      (case page
-       :product-info
+       :product-details
        ;; Show product info page
-       [product-info-page selected-product]
+       [product-info-page (some #(when (= (:id %) selected-product-id) %)
+                                (get products-by-category category))]
 
        :cart
        [cart-page (:cart app)]

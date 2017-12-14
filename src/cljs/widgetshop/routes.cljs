@@ -8,8 +8,7 @@
   (r/router
    [["/" :front-page]
     ["/products/:category" :product-listing]
-    ["/product/:id" :product-details]
-    ["/product/:id/review" :product-review]
+    ["/products/:category/:product" :product-details]
     ["/cart" :cart]
     ["/checkout" :checkout]]))
 
@@ -19,7 +18,13 @@
 
 (defmethod navigate :product-listing [{params :params}]
   (.log js/console "valitaaas tuotelistaus: " (pr-str params))
-  (products/select-category-by-name! (:category params)))
+  (products/select-category-by-name! (js/decodeURIComponent (:category params))))
+
+(defmethod navigate :product-details [{params :params}]
+  (.log js/console "cat: " (:category params) ", product: " (:product params))
+  (products/select-category-by-name! (js/decodeURIComponent (:category params)))
+  (products/set-selected-product-id! (js/parseInt (:product params)))
+  (state/update-state! assoc :page :product-details))
 
 (defmethod navigate :default [{p :page}]
   (state/update-state! assoc :page p))
